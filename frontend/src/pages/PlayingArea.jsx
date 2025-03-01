@@ -68,20 +68,21 @@ const PlayingArea = () => {
       {/* Centered Dice */}
       <div className="flex justify-center flex-col items-center">
         <Dice roll={roll} rollDice={rollDice} />
-        <div className="flex justify-center items-center flex-col">
-          <div className="flex flex-col items-center mt-4">
-            <label htmlFor="bet" className="mr-2 font-bold px-6">Enter bet</label>
+        <div className="flex flex-col items-center mt-10">
+          <label htmlFor="bet" className="mr-2 font-bold px-6">Enter bet</label>
+          <div>
             <input
               id="bet"
-              type="number"
+              type="text"
               value={bet}
               onChange={(e) => setBet(e.target.value)}
               className="border border-gray-600 bg-gray-800 text-white p-2 rounded"
             />
+
           </div>
         </div>
         <button
-          className="mt-8 px-6 py-2 bg-orange-600 text-white rounded-lg shadow hover:bg-orange-500"
+          className="mt-8 px-10 py-2 bg-orange-600 text-white rounded-lg shadow hover:bg-orange-500"
           onClick={rollDice}
           disabled={loading}
         >
