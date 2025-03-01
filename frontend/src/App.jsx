@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import './App.css'
-import StartGame from './pages/startGame'
+import StartGame from './pages/StartGame'
 
 function App() {
+
+
 
   return (
     <>

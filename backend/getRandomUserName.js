@@ -22,14 +22,17 @@ const usernames = [
   "interstellarwolf", "supervoid_knight", "graviton_ninja", "singularity_shade", "wormholeshifter99"
 ];
 
+
 /**
  * Returns a random username from the predefined list.
  */
+// const usernames = [
+//   "abhishek", "deneres", "arya", "sansa", "catelyn", "cersi", "bryan", "margery", "daenerys", "shae"
+// ]
 export function getRandomUsername() {
   const randomIndex = Math.floor(Math.random() * usernames.length);
   return usernames[randomIndex];
 }
 
-// Example usage
 console.log(getRandomUsername());
 

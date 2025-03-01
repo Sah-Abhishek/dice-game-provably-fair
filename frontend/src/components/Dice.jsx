@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-const Dice = () => {
+const Dice = ({ roll }) => {
   const [rolling, setRolling] = useState(false);
   const [result, setResult] = useState(1);
 
@@ -15,20 +15,22 @@ const Dice = () => {
     6: { rotateX: 0, rotateY: 180, rotateZ: 0 }, // Back face
   };
 
-  const rollDice = () => {
-    setRolling(true);
-    setTimeout(() => {
-      const randomNumber = Math.floor(Math.random() * 6) + 1;
-      setResult(randomNumber);
-      setRolling(false);
-    }, 1000); // Animation duration
-  };
+  // Trigger the rolling animation and set the result to the `roll` prop
+  useEffect(() => {
+    if (roll) {
+      setRolling(true);
+      setTimeout(() => {
+        setResult(roll);
+        setRolling(false);
+      }, 1000); // Animation duration
+    }
+  }, [roll]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+    <div>
       {/* Dice Container */}
       <motion.div
-        className="w-24 h-24 bg-white rounded-lg shadow-lg flex items-center justify-center text-4xl font-bold relative"
+        className="w-24 h-24 bg-white text-black rounded-lg shadow-lg flex items-center justify-center text-4xl font-bold relative"
         style={{
           transformStyle: "preserve-3d", // Enable 3D transformations
         }}
@@ -43,64 +45,29 @@ const Dice = () => {
         }}
       >
         {/* Dice Faces */}
-        <div
-          className="absolute w-full h-full flex items-center justify-center bg-white rounded-lg border-2 border-gray-200"
-          style={{
-            transform: "translateZ(30px)", // Front face
-          }}
-        >
-          1
-        </div>
-        <div
-          className="absolute w-full h-full flex items-center justify-center bg-white rounded-lg border-2 border-gray-200"
-          style={{
-            transform: "rotateY(90deg) translateZ(30px)", // Right face
-          }}
-        >
-          2
-        </div>
-        <div
-          className="absolute w-full h-full flex items-center justify-center bg-white rounded-lg border-2 border-gray-200"
-          style={{
-            transform: "rotateY(-90deg) translateZ(30px)", // Left face
-          }}
-        >
-          3
-        </div>
-        <div
-          className="absolute w-full h-full flex items-center justify-center bg-white rounded-lg border-2 border-gray-200"
-          style={{
-            transform: "rotateX(90deg) translateZ(30px)", // Top face
-          }}
-        >
-          4
-        </div>
-        <div
-          className="absolute w-full h-full flex items-center justify-center bg-white rounded-lg border-2 border-gray-200"
-          style={{
-            transform: "rotateX(-90deg) translateZ(30px)", // Bottom face
-          }}
-        >
-          5
-        </div>
-        <div
-          className="absolute w-full h-full flex items-center justify-center bg-white rounded-lg border-2 border-gray-200"
-          style={{
-            transform: "rotateY(180deg) translateZ(30px)", // Back face
-          }}
-        >
-          6
-        </div>
+        {Object.keys(resultRotations).map((key) => (
+          <div
+            key={key}
+            className="absolute w-full h-full flex items-center justify-center bg-white rounded-lg border-2 border-gray-200"
+            style={{
+              transform:
+                key === "1"
+                  ? "translateZ(30px)"
+                  : key === "2"
+                    ? "rotateY(90deg) translateZ(30px)"
+                    : key === "3"
+                      ? "rotateY(-90deg) translateZ(30px)"
+                      : key === "4"
+                        ? "rotateX(90deg) translateZ(30px)"
+                        : key === "5"
+                          ? "rotateX(-90deg) translateZ(30px)"
+                          : "rotateY(180deg) translateZ(30px)", // Back face
+            }}
+          >
+            {key}
+          </div>
+        ))}
       </motion.div>
-
-      {/* Roll Button */}
-      <button
-        className="mt-8 px-6 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600"
-        onClick={rollDice}
-        disabled={rolling}
-      >
-        {rolling ? "Rolling..." : "Roll Dice"}
-      </button>
     </div>
   );
 };
