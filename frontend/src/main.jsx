@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.jsx'
 import StartGame from './pages/StartGame.jsx'
 import PlayingArea from './pages/PlayingArea.jsx'
+import { Toaster } from 'react-hot-toast'
 
 const router = createBrowserRouter([
   {
@@ -13,11 +14,16 @@ const router = createBrowserRouter([
   }, {
     path: '/',
     element: <App />
+  }, {
+    path: '/start-game',
+    element: <PlayingArea />
   }
 ])
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+    <Toaster />
     <RouterProvider router={router} />
+
   </StrictMode>,
 )

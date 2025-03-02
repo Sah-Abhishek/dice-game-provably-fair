@@ -12,7 +12,7 @@ const Transactions = ({ messages }) => {
   }, [messages]);
 
   return (
-    <div className="bg-white text-black rounded-lg p-6 mt-4 shadow-md">
+    <div style={{ backgroundColor: '#1E1E1E' }} className="text-white text-black rounded-lg p-6 mt-4 shadow-md">
       <h2 className="text-xl font-bold mb-4">Transactions</h2>
       <div className="h-72 w-full overflow-y-auto scrollbar-hidden">
         <div className="space-y-2 p-2">
@@ -20,7 +20,7 @@ const Transactions = ({ messages }) => {
             // Determine background color based on message content
             const bgColor = transaction.includes("Lost") ? "bg-red-600" :
               transaction.includes("Won") ? "bg-green-600" :
-                "bg-gray-800"; // Default color
+                transaction.includes("Added") ? "bg-yellow-700" : "bg-gray-600"; // Default color
 
             return (
               <motion.div

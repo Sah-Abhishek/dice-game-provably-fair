@@ -66,7 +66,7 @@ app.post('/roll-dice', async (req, res) => {
   const { bet, clientSeed, uuid } = req.body;
 
   if (!bet || !clientSeed) {
-    return res.staut(400).json({
+    return res.status(400).json({
       message: "Insufficient Data"
     })
   }
@@ -98,6 +98,7 @@ app.post('/roll-dice', async (req, res) => {
     user.messages.push(message);
     balance -= bet;
   }
+  const messages = user.messages;
 
   console.log("This is the server seed: ", SERVER_SEED);
 
@@ -105,7 +106,7 @@ app.post('/roll-dice', async (req, res) => {
   await user.save();
 
   res.status(200).json({
-    roll, hash, balance
+    roll, hash, balance, messages
   })
 })
 
@@ -135,6 +136,75 @@ app.post("/start-game", async (req, res) => {
 
 
 })
+
+app.post('/add-balance', async (req, res) => {
+  const { uuid, increaseRequest } = req.body;
+
+  if (!uuid || increaseRequest === undefined || increaseRequest < 0) {
+    return res.status(400).json({
+      message: "Invalid Data"
+    });
+  }
+
+  try {
+    const user = await User.findOne({ uuid });
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+
+    const increaseAmount = Number(increaseRequest);
+    let balance = user.balance;
+    console.log("This is the typeof: ", typeof balance, typeof increaseRequest);
+    balance = balance + increaseAmount; // Increase the balance
+    user.balance = balance; // Update the user's balance
+    user.messages.push(`$ ${increaseAmount} Added`);
+    await user.save();
+    res.status(200).json({
+      message: "balance increased",
+      balance
+    })
+  } catch (error) {
+    console.log("There was some error: ", error);
+    res.status(500).json({
+      message: "Internal Server Error"
+    })
+  }
+})
+
+app.get('/get-leader-board', async (req, res) => {
+  try {
+    const users = await User.find()
+      .sort({ balance: -1 }).limit(10)
+      .select("balance username");
+
+    res.status(200).json({
+      users
+    })
+
+  } catch (error) {
+    console.log("There was some error while fetching leaderboard: ", error);
+    res.status(500).json({
+      message: "Internal Server Error"
+    })
+  }
+})
+
+app.post('/insert-mock-data', async (req, res) => {
+  const { data } = req.body;
+  try {
+    await User.insertMany(data);
+    res.status(200).json({
+      message: "Data successfully inserted"
+    });
+  } catch (error) {
+    console.log("There was some error while inserting data: ", error);
+    res.status(500).json({
+      message: "Internal Server Error" // Added a key here
+    });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
