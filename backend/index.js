@@ -22,12 +22,6 @@ const escrowAccount = Keypair.fromSecretKey(Uint8Array.from(escrowSecret));
 const houseSecret = process.env.house_sec.split(",").map(Number);
 const houseAccount = Keypair.fromSecretKey(Uint8Array.from(houseSecret));
 
-app.get("/", (req, res) => {
-  res.status(200).json({
-    message: "The server is up and running"
-  })
-})
-
 app.post("/bet-solana", async (req, res) => {
   try {
     const { uuid, playerPublicKey, betAmount, clientSeed } = req.body;
