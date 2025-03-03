@@ -8,10 +8,11 @@ const StartGame = () => {
   const [uuid, setUuid] = useState("");
   const [balance, setBalance] = useState();
   const navigate = useNavigate();
+  const backUrl = import.meta.env.VITE_BACK_URL;
 
   const fetchUserName = async () => {
     try {
-      const response = await axios.get("http://localhost:3000");
+      const response = await axios.get(`${backUrl}`);
       setUsername(response.data.username);
       setUuid(response.data.uuid);
       setBalance(response.data.balance);
@@ -28,7 +29,7 @@ const StartGame = () => {
       return;
     }
     try {
-      const response = await axios.post("http://localhost:3000/start-game", { username, uuid });
+      const response = await axios.post(`${backUrl}/start-game`, { username, uuid });
       console.log("This is the response.status: ", response.status);
       if (response.status === 200) {
         localStorage.setItem("username", username);

@@ -44,15 +44,25 @@ app.post("/bet-solana", async (req, res) => {
     const transaction = new Transaction();
 
     if (isWin) {
-      // ✅ If player wins, house pays 2x bet
       transaction.add(
+        // Return player's original bet from escrow
         SystemProgram.transfer({
-          fromPubkey: houseAccount.publicKey,  // ✅ House pays winnings
-          toPubkey: new PublicKey(playerPublicKey), // ✅ Player gets winnings
-          lamports: betAmount * 2 * LAMPORTS_PER_SOL, // ✅ Payout = 2x bet
+          fromPubkey: escrowAccount.publicKey, // ✅ Return original bet
+          toPubkey: new PublicKey(playerPublicKey), // ✅ Player gets original bet
+          lamports: betAmount * LAMPORTS_PER_SOL,
         })
       );
-    } else {
+
+      transaction.add(
+        // House pays only the extra winnings (equal to betAmount)
+        SystemProgram.transfer({
+          fromPubkey: houseAccount.publicKey,  // ✅ House pays extra winnings
+          toPubkey: new PublicKey(playerPublicKey), // ✅ Player gets winnings
+          lamports: betAmount * 2 * LAMPORTS_PER_SOL,
+        })
+      );
+    }
+    else {
       // ✅ If player loses, escrow transfers bet to house
       transaction.add(
         SystemProgram.transfer({

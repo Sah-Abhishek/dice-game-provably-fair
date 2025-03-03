@@ -29,6 +29,7 @@ const PlayingArea = () => {
   const [selectedCurrency, setSelectedCurrency] = useState("");
   const [isAddMoneyModalOpen, setIsAddMoneyModalOpen] = useState(false);
   const [isConnectPhantomModalOpen, setIsConnectPhantomModalOpen] = useState(false);
+  const baseUrl = import.meta.env.VITE_BACK_URL;
 
   const connection = new Connection("https://api.devnet.solana.com", "confirmed");
 
@@ -109,7 +110,7 @@ const PlayingArea = () => {
 
       // ✅ Request backend to resolve bet
       const clientSeed = Math.random().toString(36).substring(2);
-      const resolveResponse = await axios.post("http://localhost:3000/bet-solana", {
+      const resolveResponse = await axios.post(`${baseUrl}/bet-solana`, {
         uuid,
         betAmount: bet,
         clientSeed,
@@ -171,7 +172,7 @@ const PlayingArea = () => {
     setLoading(true);
     const clientSeed = Math.random().toString(36).substring(2, 10);
     try {
-      const response = await axios.post("http://localhost:3000/roll-dice", {
+      const response = await axios.post(`${baseUrl}/roll-dice`, {
         bet, clientSeed, uuid
       });
       if (response.status !== 200) {
@@ -207,7 +208,7 @@ const PlayingArea = () => {
 
   const getUserDetails = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/user-details/${uuid}`);
+      const response = await axios.get(`${baseUrl}/user-details/${uuid}`);
       if (response && response.data) {
         localStorage.setItem("balance", response.data.balance);
         setBalance(response.data.balance);

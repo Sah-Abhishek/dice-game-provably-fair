@@ -16,6 +16,7 @@ const AddMoneyModal = ({ getUserDetails, setBalance, isOpen, onClose }) => {
 
   console.log("Addmoneymodal opened: ");
   const uuid = localStorage.getItem("uuid");
+  const baseUrl = import.meta.env.VITE_BACK_URL;
 
   const toggleSelected = (id) => {
     setPresetAmounts((prevAmounts) =>
@@ -32,7 +33,7 @@ const AddMoneyModal = ({ getUserDetails, setBalance, isOpen, onClose }) => {
     const amountToAdd = selectedAmount ? selectedAmount.value.replace('$', '') : customAmount;
 
     try {
-      const response = await axios.post("http://localhost:3000/add-balance", {
+      const response = await axios.post(`${baseUrl}/add-balance`, {
         uuid, increaseRequest: amountToAdd
       })
       if (response && response.data) {
@@ -72,7 +73,7 @@ const AddMoneyModal = ({ getUserDetails, setBalance, isOpen, onClose }) => {
           {presetAmounts.map((amount) => (
             <button
               key={amount.id}
-              className={`border-2 border-black rounded-md py-2 px-4 text-center ${amount.selected === 'true' ? 'bg-black text-white' : ''}`}
+              className={`border - 2 border - black rounded - md py - 2 px - 4 text - center ${amount.selected === 'true' ? 'bg-black text-white' : ''}`}
               onClick={() => toggleSelected(amount.id)}
             >
               {amount.value}

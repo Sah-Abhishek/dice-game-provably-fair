@@ -3,10 +3,11 @@ import axios from 'axios';
 
 const Leaderboard = () => {
   const [users, setUsers] = useState([]);
+  const backUrl = import.meta.env.VITE_BACK_URL;
 
   const fetchLeaderboard = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/get-leader-board');
+      const response = await axios.get(`${backUrl}/get-leader-board`);
       setUsers(response.data.users);
       console.log(response.data.users);
     } catch (error) {
