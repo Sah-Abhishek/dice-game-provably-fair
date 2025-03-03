@@ -13,10 +13,13 @@
     "@solana/web3.js": "^1.98.0",
     "@tailwindcss/vite": "^4.0.9",
     "axios": "^1.8.1",
+    "buffer": "^6.0.3",
     "framer-motion": "^12.4.7",
+    "loaders.css": "^0.1.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.2",
+    "react-loaders": "^3.0.1",
     "react-router-dom": "^7.2.0",
     "tailwindcss": "^4.0.9"
   },

@@ -5,13 +5,95 @@ import cors from "cors";
 import { nanoid } from "nanoid";
 import connectDB from "./database/connection.js";
 import User from "./model/users.js";
+import { sendAndConfirmTransaction, Connection, Keypair, SystemProgram, Transaction, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 const app = express();
 const PORT = process.env.PORT || 3000;
+
 
 app.use(express.json());
 app.use(cors());
 connectDB();
 
+const connection = new Connection("https://api.devnet.solana.com", "confirmed");
+
+const escrowSecret = process.env.escrow_sec.split(",").map(Number);
+const escrowAccount = Keypair.fromSecretKey(Uint8Array.from(escrowSecret));
+
+const houseSecret = process.env.house_sec.split(",").map(Number);
+const houseAccount = Keypair.fromSecretKey(Uint8Array.from(houseSecret));
+
+app.post("/bet-solana", async (req, res) => {
+  try {
+    const { uuid, playerPublicKey, betAmount, clientSeed } = req.body;
+
+    if (!uuid || !playerPublicKey || !betAmount || !clientSeed) {
+      return res.status(400).json({ message: "Invalid Data" });
+    }
+
+    const user = await User.findOne({ uuid });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // ✅ Generate a provably fair roll
+    const serverSeed = crypto.randomBytes(32).toString("hex");
+    const { roll, hash } = generateRoll(clientSeed, serverSeed);
+    const isWin = roll >= 4;
+
+    // ✅ Create the transaction
+    const transaction = new Transaction();
+
+    if (isWin) {
+      // ✅ If player wins, house pays 2x bet
+      transaction.add(
+        SystemProgram.transfer({
+          fromPubkey: houseAccount.publicKey,  // ✅ House pays winnings
+          toPubkey: new PublicKey(playerPublicKey), // ✅ Player gets winnings
+          lamports: betAmount * 2 * LAMPORTS_PER_SOL, // ✅ Payout = 2x bet
+        })
+      );
+    } else {
+      // ✅ If player loses, escrow transfers bet to house
+      transaction.add(
+        SystemProgram.transfer({
+          fromPubkey: escrowAccount.publicKey, // ✅ Escrow holds player’s bet
+          toPubkey: houseAccount.publicKey, // ✅ House keeps the lost bet
+          lamports: betAmount * LAMPORTS_PER_SOL, // ✅ Correct bet transfer
+        })
+      );
+    }
+
+    // ✅ Fetch latest blockhash
+    const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+    transaction.recentBlockhash = blockhash;
+    transaction.feePayer = escrowAccount.publicKey;
+
+    // ✅ Sign transaction with escrow + house account if needed
+    await sendAndConfirmTransaction(connection, transaction, [escrowAccount, houseAccount]);
+
+    // ✅ Update user messages
+    const newMessage = isWin ? `Won ${2 * betAmount} SOL` : `Lost ${betAmount} SOL`;
+    user.messages.push(newMessage);
+    await user.save();
+
+    // ✅ Serialize and encode transaction for frontend
+    const serializedTransaction = transaction.serialize();
+    const base64Transaction = Buffer.from(serializedTransaction).toString("base64");
+
+    res.json({
+      transaction: base64Transaction,
+      roll,
+      isWin,
+      hash,
+      serverSeed,
+      messages: user.messages,
+    });
+
+  } catch (error) {
+    console.error("Error processing bet:", error);
+    res.status(500).json({ error: "Transaction failed" });
+  }
+});
 
 app.get("/", async (req, res) => {
 
@@ -116,6 +198,11 @@ app.post("/start-game", async (req, res) => {
   const { username, uuid } = req.body;
   console.log("This is the body: ", req.body);
   try {
+
+    // const existingUser = await User.findOne({ uuid });
+    // if(!existingUser){
+    //
+    // }
 
     const newUser = new User({
       username: username,
