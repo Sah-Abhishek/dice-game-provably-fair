@@ -1,6 +1,6 @@
 # 🎲 Solana Dice Betting Game
 
-![Demo Screenshot](frontend/src/assets/Screenshot.png) *Add actual screenshot later*
+![Demo Screenshot](frontend/src/assets/Screenshot.png) 
 
 A provably fair dice betting game built on Solana blockchain with Phantom Wallet integration.
 
