@@ -55,7 +55,7 @@ const StartGame = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white px-4">
-      <div className="bg-[#121212] my-4 p-6 sm:p-8 rounded-xl shadow-lg w-full max-w-sm text-center">
+      <div className="bg-[#121212] mt-10 p-6 sm:p-8 rounded-xl shadow-lg w-full max-w-sm text-center">
         <h1 className="text-2xl font-semibold text-gray-200">Welcome,</h1>
         <p className="text-lg text-gray-400 mt-2">
           {username ? `@${username}` : "Loading..."}
@@ -70,7 +70,7 @@ const StartGame = () => {
       </div>
 
       {/* Notes Section */}
-      <div className="mt-6 w-full max-w-sm">
+      <div className="mt-6 mb-10 w-full max-w-sm">
         <Notes />
       </div>
     </div>

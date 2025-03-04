@@ -6,6 +6,7 @@ import App from './App.jsx'
 import StartGame from './pages/StartGame.jsx'
 import PlayingArea from './pages/PlayingArea.jsx'
 import { Toaster } from 'react-hot-toast'
+import { Analytics } from "@vercel/analytics/react"
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <>
+    <Analytics />
     <Toaster />
     <RouterProvider router={router} />
   </>
