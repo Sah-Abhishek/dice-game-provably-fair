@@ -5,7 +5,7 @@ const Notes = () => {
       <ul className="space-y-4">
         <li className="flex items-center">
           <span className="w-3 h-3 bg-blue-500 rounded-full mr-3"></span>
-          <span className="text-lg text-gray-300">Phantom Wallet Testnet Ready</span>
+          <span className="text-lg text-gray-300"><span className="font-extrabold text-gray-100">Phantom Wallet</span> Devnet Ready</span>
         </li>
         <li className="flex items-center">
           <span className="w-3 h-3 bg-blue-500 rounded-full mr-3"></span>

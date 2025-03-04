@@ -22,7 +22,7 @@ const Transactions = ({ messages }) => {
 
   return (
     <div style={{ backgroundColor: "#1E1E1E" }} className="text-white w-112 text-black rounded-lg p-6 mt-4 shadow-md">
-      <h2 className="text-xl font-bold mb-4">Transactions</h2>
+      <h2 className="text-xl font-bold mb-4 text-center">Messages</h2>
       <div className="h-72 w-full overflow-y-auto scrollbar-hidden">
         <div className="space-y-2 p-2">
           {messages.map((transaction, index) => {

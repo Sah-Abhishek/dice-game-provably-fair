@@ -257,8 +257,8 @@ const PlayingArea = () => {
   }, [selectedNetwork])
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#121212] text-white p-6">
-      {/* Top Section - Controls */}
+    <div className="flex flex-col h-screen bg-[#121212] text-white p-6">
+      {/* Top Controls */}
       <div className="flex justify-between items-center mb-6">
         <NetworkSelector selectedNetwork={selectedNetwork} setSelectedNetwork={setSelectedNetwork} />
         <div className="flex gap-x-4">
@@ -278,10 +278,10 @@ const PlayingArea = () => {
         </div>
       </div>
 
-      {/* Main Layout - Using Flexbox to Distribute Sections */}
+      {/* Main Layout */}
       <div className="flex flex-1 gap-x-6">
         {/* Left Section */}
-        <div className="w-1/4 flex flex-col">
+        <div className="w-1/4 flex flex-col gap-y-4">
           <SelectCurrency
             setIsAddMoneyModalOpen={setIsAddMoneyModalOpen}
             setIsConnectPhantomModalOpen={setIsConnectPhantomModalOpen}
@@ -298,10 +298,17 @@ const PlayingArea = () => {
         <div className="w-1/2 flex flex-col items-center gap-y-6">
           <Dice roll={roll} rollDice={rollDice} />
           <div className="flex flex-col items-center">
-            <label htmlFor="bet" className="text-lg font-bold">Enter bet</label>
+            <label htmlFor="bet" className="text-lg font-bold">
+              Enter bet
+            </label>
             <div className="flex items-center mt-2">
               <button
-                onClick={() => setBet(prev => Math.max(selectedCurrency === "SOL" ? 0.01 : 100, prev - (selectedCurrency === "SOL" ? 0.1 : 100)))}
+                onClick={() =>
+                  setBet((prev) => {
+                    const newBet = selectedCurrency === "SOL" ? Math.max(0.01, prev - 0.1) : Math.max(100, prev - 100);
+                    return parseFloat(newBet.toFixed(2));
+                  })
+                }
                 className="text-xl font-bold bg-red-500 px-5 py-2 mr-3 rounded-lg"
               >
                 -
@@ -313,14 +320,21 @@ const PlayingArea = () => {
                 value={bet}
                 onChange={(e) => {
                   let value = parseFloat(e.target.value) || 0;
-                  value = selectedCurrency === "SOL" ? Math.max(0.01, value) : Math.max(100, value);
+                  if (selectedCurrency === "SOL") {
+                    value = Math.max(0.01, value);
+                  }
                   setBet(value);
                 }}
                 className="border border-gray-600 bg-gray-800 text-white p-2 rounded w-40 text-center"
               />
 
               <button
-                onClick={() => setBet(prev => prev + (selectedCurrency === "SOL" ? 0.1 : 100))}
+                onClick={() =>
+                  setBet((prev) => {
+                    const newBet = selectedCurrency === "SOL" ? prev + 0.1 : prev + 100;
+                    return parseFloat(newBet.toFixed(2));
+                  })
+                }
                 className="text-xl font-bold bg-green-500 px-5 py-2 ml-3 rounded-lg"
               >
                 +
@@ -357,6 +371,5 @@ const PlayingArea = () => {
     </div>
   );
 };
-
 
 export default PlayingArea;
