@@ -258,7 +258,7 @@ const PlayingArea = () => {
   }, [selectedNetwork])
 
   return (
-    <div className="flex flex-col min-h-screen min-w-screen bg-[#121212] text-white p-6">
+    <div className="flex flex-col min-h-screen bg-[#121212] text-white p-6">
       {/* Top Controls */}
       <div className="flex justify-between items-center mb-6">
         <NetworkSelector selectedNetwork={selectedNetwork} setSelectedNetwork={setSelectedNetwork} />
