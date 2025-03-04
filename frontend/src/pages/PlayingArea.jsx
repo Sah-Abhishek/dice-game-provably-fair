@@ -257,124 +257,106 @@ const PlayingArea = () => {
   }, [selectedNetwork])
 
   return (
-    <div className="relative flex-col h-screen bg-[#121212] text-white flex items-center justify-center">
-      {/* Top-Left Profile with Padding */}
-      <div className=" absolute top-7 right-20 gap-x-10 flex justify-center items-center">
-        <button
-          onClick={() => setIsVerifyRollOpen(true)}
-          className="  bg-orange-400 hover:bg-orange-500 px-3 py-2 text-white font-bold text-xl rounded-lg">
-          Verify Bet
-        </button>
-
-        <button
-          onClick={() => setIsAddMoneyModalOpen(true)}
-          className=" bg-orange-400 hover:bg-orange-500 px-3 py-2 text-white font-bold text-xl rounded-lg">
-          Add Money
-        </button>
-
+    <div className="flex flex-col min-h-screen bg-[#121212] text-white p-6">
+      {/* Top Section - Controls */}
+      <div className="flex justify-between items-center mb-6">
         <NetworkSelector selectedNetwork={selectedNetwork} setSelectedNetwork={setSelectedNetwork} />
-      </div>
-      {/* <div> */}
-      {/*   <SelectCurrency phantomBalance={phantomBalance} balance={balance} selectedCurrency={selectedCurrency} setSelectedCurrency={setSelectedCurrency} /> */}
-      {/* </div> */}
+        <div className="flex gap-x-4">
+          <button
+            onClick={() => setIsVerifyRollOpen(true)}
+            className="bg-orange-400 hover:bg-orange-500 px-4 py-2 text-white font-bold rounded-lg"
+          >
+            Verify Bet
+          </button>
 
-      {/* <div className="absolute top-5 left-5 p-4"> */}
-      {/*   <Profile walletConnected={wallletConnected} phantomBalance={phantomBalance} getUserDetails={getUserDetails} setBalance={setBalance} balance={balance} /> */}
-      {/* </div> */}
-
-      <div className="absolute top-5 left-5 p-4">
-        <SelectCurrency setIsAddMoneyModalOpen={setIsAddMoneyModalOpen} setIsConnectPhantomModalOpen={setIsConnectPhantomModalOpen} walletConnected={walletConnected} phantomBalance={phantomBalance} balance={balance} selectedCurrency={selectedCurrency} setSelectedCurrency={setSelectedCurrency} />
-      </div>
-
-
-
-      <div className="absolute bottom-5 left-5 p-4">
-
-        <div >
-          ClientSeed: {clientSeed}
+          <button
+            onClick={() => setIsAddMoneyModalOpen(true)}
+            className="bg-orange-400 hover:bg-orange-500 px-4 py-2 text-white font-bold rounded-lg"
+          >
+            Add Money
+          </button>
         </div>
-        <Transactions messages={messages} />
       </div>
 
-      {/* Centered Dice */}
-      <div className="flex justify-center flex-col items-center">
-        <Dice roll={roll} rollDice={rollDice} />
-        <div className="flex flex-col items-center mt-10">
-          <label htmlFor="bet" className="mr-2 font-bold px-6">Enter bet</label>
-          <div className="flex items-center">
-            {/* Subtract Button */}
-            <button
-              onClick={() =>
-                setBet((prev) => {
-                  const newBet = selectedCurrency === "SOL" ? Math.max(0.01, prev - 0.1) : Math.max(100, prev - 100);
-                  return parseFloat(newBet.toFixed(2)); // Fix floating-point precision
-                })
-              }
-              className="text-xl font-extrabold bg-red-500 px-5 py-2 mr-5 rounded-lg"
-            >
-              -
-            </button>
+      {/* Main Layout - Using Flexbox to Distribute Sections */}
+      <div className="flex flex-1 gap-x-6">
+        {/* Left Section */}
+        <div className="w-1/4 flex flex-col">
+          <SelectCurrency
+            setIsAddMoneyModalOpen={setIsAddMoneyModalOpen}
+            setIsConnectPhantomModalOpen={setIsConnectPhantomModalOpen}
+            walletConnected={walletConnected}
+            phantomBalance={phantomBalance}
+            balance={balance}
+            selectedCurrency={selectedCurrency}
+            setSelectedCurrency={setSelectedCurrency}
+          />
+          <Transactions messages={messages} />
+        </div>
 
-            {/* Input Field */}
-            <input
-              id="bet"
-              type="number"
-              value={bet}
-              onChange={(e) => {
-                let value = parseFloat(e.target.value) || 0;
-                if (selectedCurrency === "SOL") {
-                  value = Math.max(0.01, value); // Ensure minimum bet for SOL is 0.01
-                }
-                setBet(value);
-              }}
-              className="border border-gray-600 bg-gray-800 text-white p-2 rounded w-52 text-center"
-            />
+        {/* Middle Section */}
+        <div className="w-1/2 flex flex-col items-center gap-y-6">
+          <Dice roll={roll} rollDice={rollDice} />
+          <div className="flex flex-col items-center">
+            <label htmlFor="bet" className="text-lg font-bold">Enter bet</label>
+            <div className="flex items-center mt-2">
+              <button
+                onClick={() => setBet(prev => Math.max(selectedCurrency === "SOL" ? 0.01 : 100, prev - (selectedCurrency === "SOL" ? 0.1 : 100)))}
+                className="text-xl font-bold bg-red-500 px-5 py-2 mr-3 rounded-lg"
+              >
+                -
+              </button>
 
-            {/* Add Button */}
-            <button
-              onClick={() =>
-                setBet((prev) => {
-                  const newBet = selectedCurrency === "SOL" ? prev + 0.1 : prev + 100;
-                  return parseFloat(newBet.toFixed(2)); // Fix floating-point precision
-                })
-              }
-              className="text-xl font-extrabold bg-green-500 px-5 py-2 ml-5 rounded-lg"
-            >
-              +
-            </button>
+              <input
+                id="bet"
+                type="number"
+                value={bet}
+                onChange={(e) => {
+                  let value = parseFloat(e.target.value) || 0;
+                  value = selectedCurrency === "SOL" ? Math.max(0.01, value) : Math.max(100, value);
+                  setBet(value);
+                }}
+                className="border border-gray-600 bg-gray-800 text-white p-2 rounded w-40 text-center"
+              />
+
+              <button
+                onClick={() => setBet(prev => prev + (selectedCurrency === "SOL" ? 0.1 : 100))}
+                className="text-xl font-bold bg-green-500 px-5 py-2 ml-3 rounded-lg"
+              >
+                +
+              </button>
+            </div>
           </div>
+          <button
+            className="mt-6 px-8 py-2 bg-orange-600 text-white rounded-lg shadow hover:bg-orange-500"
+            onClick={() => {
+              if (selectedCurrency === "In-game-dollars") {
+                rollDice();
+              } else if (selectedCurrency === "SOL") {
+                rollWithSolana();
+              } else {
+                toast.error("Select a currency");
+              }
+            }}
+            disabled={loading}
+          >
+            {loading ? "Rolling..." : "Roll Dice"}
+          </button>
         </div>
-        <button
-          className="mt-8 px-10 py-2 bg-orange-600 text-white rounded-lg shadow hover:bg-orange-500"
-          onClick={() => {
-            if (selectedCurrency === "In-game-dollars") {
-              rollDice();
-            } else if (selectedCurrency === "SOL") {
-              rollWithSolana();
-            } else {
-              toast.error("Select a currency");
-            }
-          }}
-          disabled={loading}
-        >
-          {loading ? "Rolling..." : "Roll Dice"}
-        </button>
+
+        {/* Right Section */}
+        <div className="w-1/4 flex flex-col gap-y-4">
+          <Leaderboard roll={roll} selectedCurrency={selectedCurrency} />
+        </div>
       </div>
 
-      {/* Right Side - Leaderboard */}
-      <div className="absolute right-5 top-20 ">
-        <Leaderboard roll={roll} selectedCurrency={selectedCurrency} />
-      </div>
-
-      {isAddMoneyModalOpen && (
-        <AddMoneyModal getUserDetails={getUserDetails} setBalance={setBalance} isOpen={isAddMoneyModalOpen} onClose={() => setIsAddMoneyModalOpen(false)} />
-      )}
-      {isConnectPhantomModalOpen && (
-        <ConnectPhantomModal isOpen={isConnectPhantomModalOpen} onClose={() => setIsConnectPhantomModalOpen(false)} />
-      )}
+      {/* Modals */}
+      {isAddMoneyModalOpen && <AddMoneyModal getUserDetails={getUserDetails} setBalance={setBalance} isOpen={isAddMoneyModalOpen} onClose={() => setIsAddMoneyModalOpen(false)} />}
+      {isConnectPhantomModalOpen && <ConnectPhantomModal isOpen={isConnectPhantomModalOpen} onClose={() => setIsConnectPhantomModalOpen(false)} />}
       <VerifyRollModal isOpen={isVerifyRollModalOpen} onClose={() => setIsVerifyRollOpen(false)} />
     </div>
   );
 };
+
 
 export default PlayingArea;

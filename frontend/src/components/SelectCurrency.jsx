@@ -22,7 +22,7 @@ const SelectCurrency = ({
   };
 
   return (
-    <div className="bg-[#2D2D2D] w-120 max-w-md text-white p-8 mb-8 rounded-xl shadow-lg mx-auto">
+    <div className="bg-[#2D2D2D] w-120 max-w-md text-white p-8 rounded-xl shadow-lg mx-auto">
       <div className="font-bold text-xl text-orange-400 text-center mb-5">@{username}</div>
       <p className="font-extrabold text-3xl text-center mb-8">Select Currency</p>
 

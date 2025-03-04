@@ -21,7 +21,7 @@ const Leaderboard = ({ roll, selectedCurrency }) => {
   }, [roll]);
 
   return (
-    <div className="bg-[#1E1E1E] text-white p-5 m-10 mt-20 rounded-lg shadow-lg">
+    <div className="bg-[#1E1E1E] text-white p-5 m-5 mt-5 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-4 text-center">Leaderboard</h2>
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse border border-gray-700">
