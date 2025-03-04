@@ -14,6 +14,7 @@ import { genrateClientSeed } from "../components/functions";
 import { VerifiedIcon } from "lucide-react";
 import VerifyRollModal from "../components/VerifyRollModal";
 import NetworkSelector from "../components/NetworkSelector";
+import Rules from "../components/Rules";
 
 if (typeof window !== "undefined") {
   window.Buffer = Buffer;
@@ -296,6 +297,7 @@ const PlayingArea = () => {
 
         {/* Middle Section */}
         <div className="w-1/2 flex flex-col items-center gap-y-6">
+          <Rules />
           <Dice roll={roll} rollDice={rollDice} />
           <div className="flex flex-col items-center">
             <label htmlFor="bet" className="text-lg font-bold">
