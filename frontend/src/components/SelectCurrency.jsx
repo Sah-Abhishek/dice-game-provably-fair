@@ -40,7 +40,7 @@ const SelectCurrency = ({
               {item}
             </div>
             <p className="text-md text-gray-300 mt-2">
-              Balance: {item === "In-game-dollars" ? `$${balance}` : (phantomBalance ? phantomBalance.toFixed(3) + " SOL" : "0.000 SOL")}
+              Balance: {item === "In-game-dollars" ? `$${balance.toFixed(3)}` : (phantomBalance ? phantomBalance.toFixed(3) + " SOL" : "0.000 SOL")}
             </p>
           </span>
         ))}

@@ -14,7 +14,6 @@ app.use(express.json());
 app.use(cors());
 connectDB();
 
-const connection = new Connection("https://api.devnet.solana.com", "confirmed");
 
 const escrowSecret = process.env.escrow_sec.split(",").map(Number);
 const escrowAccount = Keypair.fromSecretKey(Uint8Array.from(escrowSecret));
@@ -24,7 +23,8 @@ const houseAccount = Keypair.fromSecretKey(Uint8Array.from(houseSecret));
 
 app.post("/bet-solana", async (req, res) => {
   try {
-    const { uuid, playerPublicKey, betAmount, clientSeed } = req.body;
+    const { selectedNetwork, uuid, playerPublicKey, betAmount, clientSeed } = req.body;
+    // console.log("This is the clientSeed from the frontend: ", clientSeed);
 
     if (!uuid || !playerPublicKey || !betAmount || !clientSeed) {
       return res.status(400).json({ message: "Invalid Data" });
@@ -33,6 +33,15 @@ app.post("/bet-solana", async (req, res) => {
     const user = await User.findOne({ uuid });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+
+    let connection;
+
+    if (selectedNetwork === 'devnet') {
+      connection = new Connection("https://api.devnet.solana.com", "confirmed");
+    } else {
+      connection = new Connection("https://api.mainnet-beta.solana.com", "confirmed");
     }
 
     // ✅ Generate a provably fair roll
@@ -74,12 +83,23 @@ app.post("/bet-solana", async (req, res) => {
     }
 
     // ✅ Fetch latest blockhash
-    const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+    const { blockhash } = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash;
     transaction.feePayer = escrowAccount.publicKey;
 
     // ✅ Sign transaction with escrow + house account if needed
     await sendAndConfirmTransaction(connection, transaction, [escrowAccount, houseAccount]);
+
+
+    const rollMessage = `clientSeed: ${clientSeed}\nserverSeed: ${serverSeed}\nrollHash: ${hash}\nroll: ${roll}`
+    user.messages.push(rollMessage);
+
+
+    if (isWin) {
+      user.solanaNetWon += 2 * betAmount * LAMPORTS_PER_SOL;
+    } else {
+      user.solanaNetWon -= betAmount * LAMPORTS_PER_SOL;
+    }
 
     // ✅ Update user messages
     const newMessage = isWin ? `Won ${2 * betAmount} SOL` : `Lost ${betAmount} SOL`;
@@ -89,6 +109,8 @@ app.post("/bet-solana", async (req, res) => {
     // ✅ Serialize and encode transaction for frontend
     const serializedTransaction = transaction.serialize();
     const base64Transaction = Buffer.from(serializedTransaction).toString("base64");
+
+
 
     res.json({
       transaction: base64Transaction,
@@ -157,6 +179,8 @@ const generateRoll = (clientSeed, serverSeed) => {
 app.post('/roll-dice', async (req, res) => {
   const { bet, clientSeed, uuid } = req.body;
 
+  // console.log("This is the clientSeed from the frontend: ", clientSeed);
+
   if (!bet || !clientSeed) {
     return res.status(400).json({
       message: "Insufficient Data"
@@ -180,6 +204,11 @@ app.post('/roll-dice', async (req, res) => {
 
   const SERVER_SEED = crypto.randomBytes(16).toString('hex');
   const { roll, hash } = generateRoll(clientSeed, SERVER_SEED);
+
+  const rollMessage = `clientSeed: ${clientSeed}\nserverSeed: ${SERVER_SEED}\nrollHash: ${hash}\nroll: ${roll}`
+  user.messages.push(rollMessage);
+
+
   if (roll >= 4) {
     const winingAmount = 2 * bet;
     const message = `Won $ ${winingAmount}`;
@@ -190,9 +219,19 @@ app.post('/roll-dice', async (req, res) => {
     user.messages.push(message);
     balance -= bet;
   }
+
+  const isWin = roll > 3 ? true : false;
+
+  if (isWin) {
+    user.inGameDollarsNetWon += 2 * bet;
+  } else {
+    user.inGameDollarsNetWon -= bet;
+  }
+
+
   const messages = user.messages;
 
-  console.log("This is the server seed: ", SERVER_SEED);
+  // console.log("This is the server seed: ", SERVER_SEED);
 
   user.balance = balance;
   await user.save();
@@ -206,7 +245,7 @@ app.post('/roll-dice', async (req, res) => {
 
 app.post("/start-game", async (req, res) => {
   const { username, uuid } = req.body;
-  console.log("This is the body: ", req.body);
+  // console.log("This is the body: ", req.body);
   try {
 
     // const existingUser = await User.findOne({ uuid });
@@ -253,7 +292,7 @@ app.post('/add-balance', async (req, res) => {
 
     const increaseAmount = Number(increaseRequest);
     let balance = user.balance;
-    console.log("This is the typeof: ", typeof balance, typeof increaseRequest);
+    // console.log("This is the typeof: ", typeof balance, typeof increaseRequest);
     balance = balance + increaseAmount; // Increase the balance
     user.balance = balance; // Update the user's balance
     user.messages.push(`$ ${increaseAmount} Added`);
@@ -272,12 +311,15 @@ app.post('/add-balance', async (req, res) => {
 
 app.get('/get-leader-board', async (req, res) => {
   try {
-    const users = await User.find()
-      .sort({ balance: -1 }).limit(10)
-      .select("balance username");
+    const leaderSolana = await User.find()
+      .sort({ solanaNetWon: -1 }).limit(10)
+      .select("username solanaNetWon");
+    const leaderInGameDollars = await User.find()
+      .sort({ inGameDollarsNetWon: -1 }).limit(10)
+      .select("username inGameDollarsNetWon");
 
     res.status(200).json({
-      users
+      leaderSolana, leaderInGameDollars
     })
 
   } catch (error) {

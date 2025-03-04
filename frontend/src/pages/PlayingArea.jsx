@@ -10,6 +10,10 @@ import SelectCurrency from "../components/SelectCurrency";
 import { Buffer } from 'buffer';
 import AddMoneyModal from "../components/AddMoneyModal";
 import ConnectPhantomModal from "../components/ConnectPhantomModal";
+import { genrateClientSeed } from "../components/functions";
+import { VerifiedIcon } from "lucide-react";
+import VerifyRollModal from "../components/VerifyRollModal";
+import NetworkSelector from "../components/NetworkSelector";
 
 if (typeof window !== "undefined") {
   window.Buffer = Buffer;
@@ -30,8 +34,9 @@ const PlayingArea = () => {
   const [isAddMoneyModalOpen, setIsAddMoneyModalOpen] = useState(false);
   const [isConnectPhantomModalOpen, setIsConnectPhantomModalOpen] = useState(false);
   const baseUrl = import.meta.env.VITE_BACK_URL;
-
-  const connection = new Connection("https://api.devnet.solana.com", "confirmed");
+  const [clientSeed, setClientSeed] = useState(null);
+  const [isVerifyRollModalOpen, setIsVerifyRollOpen] = useState(false);
+  const [selectedNetwork, setSelectedNetwork] = useState("devnet"); // Default to devnet
 
 
   const connectWallet = async () => {
@@ -51,7 +56,15 @@ const PlayingArea = () => {
 
 
   const fetchBalance = async (publicKey) => {
-    const connection = new Connection("https://api.devnet.solana.com", "confirmed");
+
+    let connection;
+    // console.log("This is the publicKey inside the fetchBalance: ", new PublicKey(publicKey));
+
+    if (selectedNetwork === 'devnet') {
+      connection = new Connection("https://api.devnet.solana.com", "confirmed");
+    } else {
+      connection = new Connection("https://api.mainnet-beta.solana.com", "confirmed");
+    }
 
     try {
       const balance = await connection.getBalance(new PublicKey(publicKey));
@@ -70,9 +83,13 @@ const PlayingArea = () => {
     }
 
     setLoading(true);
+    let connection;
 
-    // ✅ Define connection
-    const connection = new Connection("https://api.devnet.solana.com", "confirmed");
+    if (selectedNetwork === 'devnet') {
+      connection = new Connection("https://api.devnet.solana.com", "confirmed");
+    } else {
+      connection = new Connection("https://api.mainnet-beta.solana.com", "confirmed");
+    }
 
 
 
@@ -109,8 +126,9 @@ const PlayingArea = () => {
       );
 
       // ✅ Request backend to resolve bet
-      const clientSeed = Math.random().toString(36).substring(2);
+
       const resolveResponse = await axios.post(`${baseUrl}/bet-solana`, {
+        selectedNetwork,
         uuid,
         betAmount: bet,
         clientSeed,
@@ -170,7 +188,7 @@ const PlayingArea = () => {
 
   const rollDice = async () => {
     setLoading(true);
-    const clientSeed = Math.random().toString(36).substring(2, 10);
+    // const clientSeed = Math.random().toString(36).substring(2, 10);
     try {
       const response = await axios.post(`${baseUrl}/roll-dice`, {
         bet, clientSeed, uuid
@@ -221,22 +239,41 @@ const PlayingArea = () => {
 
   useEffect(() => {
     getUserDetails();
-  }, []);
+    setBet(selectedCurrency === "SOL" ? 0.1 : 100);
+  }, [selectedCurrency]);
 
   useEffect(() => {
+    let seed = genrateClientSeed();
+    setClientSeed(seed);
     if (publicKey) {
       fetchBalance(publicKey);
     }
   }, [roll]);
 
+  useEffect(() => {
+    if (publicKey) {
+      fetchBalance(publicKey);
+    }
+  }, [selectedNetwork])
+
   return (
     <div className="relative flex-col h-screen bg-[#121212] text-white flex items-center justify-center">
       {/* Top-Left Profile with Padding */}
-      <button
-        onClick={() => setIsAddMoneyModalOpen(true)}
-        className="absolute top-7 right-20 bg-orange-400 hover:bg-orange-500 px-3 py-2 text-white font-bold text-xl rounded-lg">
-        Add Money
-      </button>
+      <div className=" absolute top-7 right-20 gap-x-10 flex justify-center items-center">
+        <button
+          onClick={() => setIsVerifyRollOpen(true)}
+          className="  bg-orange-400 hover:bg-orange-500 px-3 py-2 text-white font-bold text-xl rounded-lg">
+          Verify Bet
+        </button>
+
+        <button
+          onClick={() => setIsAddMoneyModalOpen(true)}
+          className=" bg-orange-400 hover:bg-orange-500 px-3 py-2 text-white font-bold text-xl rounded-lg">
+          Add Money
+        </button>
+
+        <NetworkSelector selectedNetwork={selectedNetwork} setSelectedNetwork={setSelectedNetwork} />
+      </div>
       {/* <div> */}
       {/*   <SelectCurrency phantomBalance={phantomBalance} balance={balance} selectedCurrency={selectedCurrency} setSelectedCurrency={setSelectedCurrency} /> */}
       {/* </div> */}
@@ -250,7 +287,12 @@ const PlayingArea = () => {
       </div>
 
 
+
       <div className="absolute bottom-5 left-5 p-4">
+
+        <div >
+          ClientSeed: {clientSeed}
+        </div>
         <Transactions messages={messages} />
       </div>
 
@@ -260,24 +302,45 @@ const PlayingArea = () => {
         <div className="flex flex-col items-center mt-10">
           <label htmlFor="bet" className="mr-2 font-bold px-6">Enter bet</label>
           <div className="flex items-center">
+            {/* Subtract Button */}
             <button
-              onClick={() => setBet(prev => prev + 100)}
+              onClick={() =>
+                setBet((prev) => {
+                  const newBet = selectedCurrency === "SOL" ? Math.max(0.01, prev - 0.1) : Math.max(100, prev - 100);
+                  return parseFloat(newBet.toFixed(2)); // Fix floating-point precision
+                })
+              }
               className="text-xl font-extrabold bg-red-500 px-5 py-2 mr-5 rounded-lg"
             >
-              +
+              -
             </button>
+
+            {/* Input Field */}
             <input
               id="bet"
               type="number"
               value={bet}
-              onChange={(e) => setBet(Math.max(0, e.target.value))}
+              onChange={(e) => {
+                let value = parseFloat(e.target.value) || 0;
+                if (selectedCurrency === "SOL") {
+                  value = Math.max(0.01, value); // Ensure minimum bet for SOL is 0.01
+                }
+                setBet(value);
+              }}
               className="border border-gray-600 bg-gray-800 text-white p-2 rounded w-52 text-center"
             />
+
+            {/* Add Button */}
             <button
-              onClick={() => setBet(prev => Math.max(0, prev - 100))}
+              onClick={() =>
+                setBet((prev) => {
+                  const newBet = selectedCurrency === "SOL" ? prev + 0.1 : prev + 100;
+                  return parseFloat(newBet.toFixed(2)); // Fix floating-point precision
+                })
+              }
               className="text-xl font-extrabold bg-green-500 px-5 py-2 ml-5 rounded-lg"
             >
-              -
+              +
             </button>
           </div>
         </div>
@@ -300,7 +363,7 @@ const PlayingArea = () => {
 
       {/* Right Side - Leaderboard */}
       <div className="absolute right-5 top-20 ">
-        <Leaderboard />
+        <Leaderboard roll={roll} selectedCurrency={selectedCurrency} />
       </div>
 
       {isAddMoneyModalOpen && (
@@ -309,6 +372,7 @@ const PlayingArea = () => {
       {isConnectPhantomModalOpen && (
         <ConnectPhantomModal isOpen={isConnectPhantomModalOpen} onClose={() => setIsConnectPhantomModalOpen(false)} />
       )}
+      <VerifyRollModal isOpen={isVerifyRollModalOpen} onClose={() => setIsVerifyRollOpen(false)} />
     </div>
   );
 };

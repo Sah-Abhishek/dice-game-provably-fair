@@ -5,10 +5,10 @@ const Notes = () => {
 
 
   return (
-    <div className="rounded-lg mt-10 p-10"
+    <div className="rounded-lg mt-10 p-10" pt-5
       style={{ backgroundColor: '#1E1E1E' }}
     >
-      hi there
+      <div className="font-bold text-3xl ">Important Note</div>
     </div>
   )
 }

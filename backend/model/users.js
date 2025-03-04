@@ -21,6 +21,14 @@ const userSchema = new mongoose.Schema({
   messages: {
     type: [String],
     default: []
+  },
+  solanaNetWon: {
+    type: Number,
+    default: 0,
+  },
+  inGameDollarsNetWon: {
+    type: Number,
+    default: 0,
   }
 })
 
