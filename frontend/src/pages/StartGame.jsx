@@ -25,17 +25,16 @@ const StartGame = () => {
     const storedUsername = localStorage.getItem("username");
     const storedUuid = localStorage.getItem("uuid");
     if (storedUuid && storedUsername) {
-      navigate('/game');
+      navigate("/game");
       return;
     }
     try {
       const response = await axios.post(`${backUrl}/start-game`, { username, uuid });
-      console.log("This is the response.status: ", response.status);
       if (response.status === 200) {
         localStorage.setItem("username", username);
         localStorage.setItem("uuid", uuid);
         localStorage.setItem("balance", balance);
-        navigate('/game');
+        navigate("/game");
       }
     } catch (error) {
       console.error("Error starting the game:", error);
@@ -55,18 +54,23 @@ const StartGame = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
-      <div className="bg-[#121212] p-8 rounded-xl shadow-lg w-96 text-center">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white px-4">
+      <div className="bg-[#121212] p-6 sm:p-8 rounded-xl shadow-lg w-full max-w-sm text-center">
         <h1 className="text-2xl font-semibold text-gray-200">Welcome,</h1>
         <p className="text-lg text-gray-400 mt-2">
           {username ? `@${username}` : "Loading..."}
         </p>
 
-        <button onClick={handleStart} className="mt-6 w-full bg-orange-600 hover:bg-orange-500 text-white font-medium py-2 rounded-lg transition duration-300">
+        <button
+          onClick={handleStart}
+          className="mt-6 w-full bg-orange-600 hover:bg-orange-500 text-white font-medium py-3 rounded-lg transition duration-300 text-lg"
+        >
           Start Game
         </button>
       </div>
-      <div >
+
+      {/* Notes Section */}
+      <div className="mt-6 w-full max-w-sm">
         <Notes />
       </div>
     </div>
