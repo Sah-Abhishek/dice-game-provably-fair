@@ -59,7 +59,7 @@ const StartGame = () => {
       <div className="bg-[#121212] p-8 rounded-xl shadow-lg w-96 text-center">
         <h1 className="text-2xl font-semibold text-gray-200">Welcome,</h1>
         <p className="text-lg text-gray-400 mt-2">
-          {username ? username : "Loading..."}
+          {username ? `@${username}` : "Loading..."}
         </p>
 
         <button onClick={handleStart} className="mt-6 w-full bg-orange-600 hover:bg-orange-500 text-white font-medium py-2 rounded-lg transition duration-300">

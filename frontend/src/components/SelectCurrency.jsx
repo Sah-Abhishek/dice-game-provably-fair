@@ -12,8 +12,8 @@ const SelectCurrency = ({
 
   const handleCurrencySelect = (currency) => {
     setSelectedCurrency(currency);
-    console.log("This is working");
-    console.log("walletConnected: ", walletConnected, "\t currency: ", currency);
+    // console.log("This is working");
+    // console.log("walletConnected: ", walletConnected, "\t currency: ", currency);
 
     // If user selects SOL and wallet is NOT connected, trigger the modal
     if (currency === "SOL" && !walletConnected) {

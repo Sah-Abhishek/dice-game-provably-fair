@@ -15,7 +15,7 @@ const Dice = ({ roll }) => {
     6: { rotateX: 0, rotateY: 180, rotateZ: 0 }, // Back face
   };
 
-  console.log("This is the roll from inside of the dice component: ", roll);
+  // console.log("This is the roll from inside of the dice component: ", roll);
   // Trigger the rolling animation and set the result to the `roll` prop
   useEffect(() => {
     if (roll) {

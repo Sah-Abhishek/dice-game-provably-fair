@@ -9,7 +9,7 @@ const Leaderboard = () => {
     try {
       const response = await axios.get(`${backUrl}/get-leader-board`);
       setUsers(response.data.users);
-      console.log(response.data.users);
+      // console.log(response.data.users);
     } catch (error) {
       console.error("Error fetching leaderboard:", error);
     }
@@ -20,7 +20,7 @@ const Leaderboard = () => {
   }, []);
 
   return (
-    <div style={{ backgroundColor: '#1E1E1E' }} className="text-white p-10 m-10 mt-15 rounded-lg shadow-lg">
+    <div style={{ backgroundColor: '#1E1E1E' }} className="text-white p-5 m-10 mt-20 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-4 text-center">Leaderboard</h2>
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse border border-gray-700">

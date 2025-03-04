@@ -14,7 +14,6 @@ const AddMoneyModal = ({ getUserDetails, setBalance, isOpen, onClose }) => {
     { id: 6, value: '$200', selected: 'false' },
   ]);
 
-  console.log("Addmoneymodal opened: ");
   const uuid = localStorage.getItem("uuid");
   const baseUrl = import.meta.env.VITE_BACK_URL;
 
@@ -37,7 +36,6 @@ const AddMoneyModal = ({ getUserDetails, setBalance, isOpen, onClose }) => {
         uuid, increaseRequest: amountToAdd
       })
       if (response && response.data) {
-        console.log("This is not logging: ", response.data.message);
         setBalance(response.data.balance);
         toast.success(response.data.message);
         getUserDetails();
@@ -73,7 +71,7 @@ const AddMoneyModal = ({ getUserDetails, setBalance, isOpen, onClose }) => {
           {presetAmounts.map((amount) => (
             <button
               key={amount.id}
-              className={`border - 2 border - black rounded - md py - 2 px - 4 text - center ${amount.selected === 'true' ? 'bg-black text-white' : ''}`}
+              className={`border-2 border-black rounded-md py-2 px-4 text-center ${amount.selected === 'true' ? 'bg-black text-white' : ''}`}
               onClick={() => toggleSelected(amount.id)}
             >
               {amount.value}
