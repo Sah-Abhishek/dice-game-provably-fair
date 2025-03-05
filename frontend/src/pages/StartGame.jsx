@@ -16,31 +16,36 @@ const StartGame = () => {
       setUsername(response.data.username);
       setUuid(response.data.uuid);
       setBalance(response.data.balance);
+      console.log("This is after the firstResponse: ", response);
     } catch (error) {
       console.error("Error fetching username:", error);
     }
   };
 
+  const handleNewUser = async () => {
+    await fetchUserName(); // Fetch new user but don't store in localStorage yet
+  };
+
   const handleStart = async () => {
-    const storedUsername = localStorage.getItem("username");
-    const storedUuid = localStorage.getItem("uuid");
-    if (storedUuid && storedUsername) {
-      navigate("/game");
+    if (!username || !uuid) {
+      console.error("No username or UUID found.");
       return;
     }
+
     try {
       const response = await axios.post(`${backUrl}/start-game`, { username, uuid });
       if (response.status === 200) {
+        // Store data in localStorage only when starting the game
         localStorage.setItem("username", username);
         localStorage.setItem("uuid", uuid);
         localStorage.setItem("balance", balance);
+
         navigate("/game");
       }
     } catch (error) {
       console.error("Error starting the game:", error);
     }
   };
-
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
     const storedUuid = localStorage.getItem("uuid");
@@ -61,12 +66,17 @@ const StartGame = () => {
           {username ? `@${username}` : "Loading..."}
         </p>
 
-        <button
-          onClick={handleStart}
-          className="mt-6 w-full bg-orange-600 hover:bg-orange-500 text-white font-medium py-3 rounded-lg transition duration-300 text-lg"
-        >
-          Start Game
-        </button>
+        <div>
+          <button onClick={handleStart} className="mt-6 w-full bg-orange-600 hover:bg-orange-500 text-white font-medium py-3 rounded-lg transition duration-300 text-lg"
+          >
+            Start Game
+          </button>
+          <button onClick={handleNewUser} className="mt-6 w-full bg-orange-800 hover:bg-orange-700 text-white font-medium py-3 rounded-lg transition duration-300 text-lg"
+          >
+            New User
+          </button>
+
+        </div>
       </div>
 
       {/* Notes Section */}
