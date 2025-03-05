@@ -358,6 +358,10 @@ const PlayingArea = () => {
           >
             {loading ? "Rolling..." : "Roll Dice"}
           </button>
+
+          <div>
+            Client Seed: {clientSeed}
+          </div>
         </div>
 
         {/* Right Section */}
