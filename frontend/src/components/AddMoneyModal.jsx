@@ -31,14 +31,15 @@ const AddMoneyModal = ({ getUserDetails, setBalance, isOpen, onClose }) => {
     const selectedAmount = presetAmounts.find(amount => amount.selected === 'true');
     const amountToAdd = selectedAmount ? selectedAmount.value.replace('$', '') : customAmount;
 
-    if (!customAmount) {
+    if (!amountToAdd) {  // Fix: Check if no amount is selected
       toast.error("Enter a valid Amount");
       return;
     }
 
     try {
       const response = await axios.post(`${baseUrl}/add-balance`, {
-        uuid, increaseRequest: amountToAdd
+        uuid,
+        increaseRequest: amountToAdd,
       });
       if (response && response.data) {
         setBalance(response.data.balance);
@@ -52,7 +53,6 @@ const AddMoneyModal = ({ getUserDetails, setBalance, isOpen, onClose }) => {
       toast.error(errorMessage);
     }
   };
-
   const handleCustomAmountChange = (e) => {
     setCustomAmount(e.target.value);
   };
