@@ -5,7 +5,6 @@ const Dice = ({ roll }) => {
   const [rolling, setRolling] = useState(false);
   const [result, setResult] = useState(1);
 
-  // Map dice results to their respective rotations
   const resultRotations = {
     1: { rotateX: 0, rotateY: 0, rotateZ: 0 }, // Front face
     2: { rotateX: 0, rotateY: 90, rotateZ: 0 }, // Right face
@@ -33,7 +32,7 @@ const Dice = ({ roll }) => {
       <motion.div
         className="w-24 h-24 bg-white text-black rounded-lg shadow-lg flex items-center justify-center text-4xl font-bold relative"
         style={{
-          transformStyle: "preserve-3d", // Enable 3D transformations
+          transformStyle: "preserve-3d",
         }}
         animate={{
           rotateX: rolling ? 1080 : resultRotations[result].rotateX,

@@ -54,7 +54,6 @@ app.post("/bet-solana", async (req, res) => {
 
     if (isWin) {
       transaction.add(
-        // Return player's original bet from escrow
         SystemProgram.transfer({
           fromPubkey: escrowAccount.publicKey, // ✅ Return original bet
           toPubkey: new PublicKey(playerPublicKey), // ✅ Player gets original bet
@@ -63,7 +62,6 @@ app.post("/bet-solana", async (req, res) => {
       );
 
       transaction.add(
-        // House pays only the extra winnings (equal to betAmount)
         SystemProgram.transfer({
           fromPubkey: houseAccount.publicKey,  // ✅ House pays extra winnings
           toPubkey: new PublicKey(playerPublicKey), // ✅ Player gets winnings
@@ -72,7 +70,6 @@ app.post("/bet-solana", async (req, res) => {
       );
     }
     else {
-      // ✅ If player loses, escrow transfers bet to house
       transaction.add(
         SystemProgram.transfer({
           fromPubkey: escrowAccount.publicKey, // ✅ Escrow holds player’s bet
@@ -82,12 +79,10 @@ app.post("/bet-solana", async (req, res) => {
       );
     }
 
-    // ✅ Fetch latest blockhash
     const { blockhash } = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash;
     transaction.feePayer = escrowAccount.publicKey;
 
-    // ✅ Sign transaction with escrow + house account if needed
     await sendAndConfirmTransaction(connection, transaction, [escrowAccount, houseAccount]);
 
 
@@ -101,12 +96,10 @@ app.post("/bet-solana", async (req, res) => {
       user.solanaNetWon -= betAmount * LAMPORTS_PER_SOL;
     }
 
-    // ✅ Update user messages
     const newMessage = isWin ? `Won ${2 * betAmount} SOL` : `Lost ${betAmount} SOL`;
     user.messages.push(newMessage);
     await user.save();
 
-    // ✅ Serialize and encode transaction for frontend
     const serializedTransaction = transaction.serialize();
     const base64Transaction = Buffer.from(serializedTransaction).toString("base64");
 
@@ -159,7 +152,6 @@ app.get("/user-details/:uuid", async (req, res) => {
       });
     }
 
-    // Send the user details back in the response
     res.status(200).json(user);
   } catch (error) {
     console.log("There was some error: ", error);
@@ -179,7 +171,6 @@ const generateRoll = (clientSeed, serverSeed) => {
 app.post('/roll-dice', async (req, res) => {
   const { bet, clientSeed, uuid } = req.body;
 
-  // console.log("This is the clientSeed from the frontend: ", clientSeed);
 
   if (!bet || !clientSeed) {
     return res.status(400).json({
@@ -247,11 +238,6 @@ app.post("/start-game", async (req, res) => {
   const { username, uuid } = req.body;
   // console.log("This is the body: ", req.body);
   try {
-
-    // const existingUser = await User.findOne({ uuid });
-    // if(!existingUser){
-    //
-    // }
 
     const newUser = new User({
       username: username,
@@ -340,7 +326,7 @@ app.post('/insert-mock-data', async (req, res) => {
   } catch (error) {
     console.log("There was some error while inserting data: ", error);
     res.status(500).json({
-      message: "Internal Server Error" // Added a key here
+      message: "Internal Server Error"
     });
   }
 });

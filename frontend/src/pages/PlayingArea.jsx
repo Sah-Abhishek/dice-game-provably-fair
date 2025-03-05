@@ -97,10 +97,8 @@ const PlayingArea = () => {
     try {
       const escrowAccount = new PublicKey("3jvoEz3MUGXMhzrSptSkZMFA5oYXKaMc3eXqs9uk6ZMH");
 
-      // ✅ Fetch latest blockhash
       const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
 
-      // ✅ Create a transaction
       const transaction = new Transaction().add(
         SystemProgram.transfer({
           fromPubkey: new PublicKey(publicKey),
@@ -112,10 +110,8 @@ const PlayingArea = () => {
       transaction.recentBlockhash = blockhash;
       transaction.feePayer = new PublicKey(publicKey);
 
-      // ✅ Sign transaction with Phantom wallet
       const signedTransaction = await window.solana.signTransaction(transaction);
 
-      // ✅ Send and confirm transaction
       const signature = await connection.sendRawTransaction(signedTransaction.serialize());
       await connection.confirmTransaction(
         {
@@ -126,7 +122,6 @@ const PlayingArea = () => {
         "confirmed"
       );
 
-      // ✅ Request backend to resolve bet
 
       const resolveResponse = await axios.post(`${baseUrl}/bet-solana`, {
         selectedNetwork,
@@ -136,7 +131,6 @@ const PlayingArea = () => {
         playerPublicKey: publicKey,
       });
 
-      // ✅ Validate backend response
       if (!resolveResponse.data.transaction) {
         throw new Error("Backend did not return a valid transaction.");
       }
@@ -145,27 +139,19 @@ const PlayingArea = () => {
 
       setRoll(roll);
       getUserDetails();
-      // toast.success(isWin ? `You win ${bet * 2} SOL!` : `You lose ${bet} SOL.`);
-      // console.log("\n\nThis is the checkPoint\n\n");
       if (isWin) {
         toast.success(`You win ${bet * 2} SOL!`);
       } else {
         toast.error(`You lose ${bet} SOL`);
       }
 
-      // ✅ Ensure Buffer is available in browser
       window.Buffer = window.Buffer || require("buffer").Buffer;
 
-      // ✅ Decode and process backend transaction
-      // const resolveTransaction = Transaction.from(Buffer.from(serializedTransaction, "base64"));
-      // const resolveSignature = await connection.sendRawTransaction(resolveTransaction.serialize());
-      // await connection.confirmTransaction(resolveSignature);
 
 
 
     } catch (error) {
       console.error("There was some error while betting with Solana:", error);
-      // ✅ Handle user rejection
       if (error.message.includes("User rejected") || error.message.includes("Transaction rejected")) {
         toast.error("Transaction signing was cancelled.");
       } else {
