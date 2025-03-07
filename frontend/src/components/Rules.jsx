@@ -3,10 +3,10 @@ const Rules = () => {
   const win = ["4", "5", "6"];
 
   return (
-    <div className="p-5 mb-5 bg-[#1E1E1E] rounded-lg px-10">
+    <div className="py-5 m-5 bg-[#1E1E1E] rounded-lg px-2 sm:px-10">
       <h2 className="text-center font-extrabold text-3xl text-white mb-4">Rules</h2>
 
-      <div className="flex gap-x-10">
+      <div className="flex gap-x-3 sm:gap-x-10">
         {/* Losing Numbers */}
         <div className="mb-4">
           <h3 className="text-red-500 font-bold text-xl mb-2 text-center">You Lose On:</h3>

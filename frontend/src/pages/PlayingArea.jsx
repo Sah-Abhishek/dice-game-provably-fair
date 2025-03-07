@@ -266,9 +266,9 @@ const PlayingArea = () => {
       </div>
 
       {/* Main Layout */}
-      <div className="flex flex-1 gap-x-6">
+      <div className="flex flex-col sm:flex-row gap-x-6">
         {/* Left Section */}
-        <div className="w-1/4 flex flex-col gap-y-4">
+        <div className="sm:w-1/4 flex flex-col gap-y-4">
           <SelectCurrency
             setIsAddMoneyModalOpen={setIsAddMoneyModalOpen}
             setIsConnectPhantomModalOpen={setIsConnectPhantomModalOpen}
@@ -282,7 +282,7 @@ const PlayingArea = () => {
         </div>
 
         {/* Middle Section */}
-        <div className="w-1/2 flex flex-col items-center gap-y-6">
+        <div className="sm:w-1/2 flex flex-col items-center gap-y-6">
           <Rules />
           <Dice roll={roll} rollDice={rollDice} />
           <div className="flex flex-col items-center">
@@ -351,7 +351,7 @@ const PlayingArea = () => {
         </div>
 
         {/* Right Section */}
-        <div className="w-1/4 flex flex-col gap-y-4">
+        <div className="sm:w-1/4">
           <Leaderboard roll={roll} selectedCurrency={selectedCurrency} />
         </div>
       </div>

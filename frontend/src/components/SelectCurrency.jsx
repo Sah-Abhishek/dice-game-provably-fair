@@ -22,7 +22,7 @@ const SelectCurrency = ({
   };
 
   return (
-    <div className="bg-[#2D2D2D] w-120 max-w-md text-white p-8 rounded-xl shadow-lg mx-auto">
+    <div className="bg-[#2D2D2D] w-full sm:w-120 max-w-md text-white p-8 rounded-xl shadow-lg mx-auto">
       <div className="font-bold text-xl text-orange-400 text-center mb-5">@{username}</div>
       <p className="font-extrabold text-3xl text-center mb-8">Select Currency</p>
 
@@ -30,7 +30,7 @@ const SelectCurrency = ({
         {currency.map((item, index) => (
           <span key={index} className="flex flex-col items-center">
             <div
-              className={`min-w-[150px] px-6 py-4 text-center font-semibold text-lg rounded-full cursor-pointer transition-all duration-300 transform whitespace-nowrap
+              className={`min-w-full max-w-[150px] px-2 sm:px-6 py-4 text-center font-semibold text-lg rounded-full cursor-pointer transition-all duration-300 transform whitespace-nowrap
               ${selectedCurrency === item
                   ? "bg-gradient-to-r from-green-400 to-blue-500 text-white shadow-xl scale-105"
                   : "bg-white text-black hover:bg-gray-200 hover:shadow-lg"
