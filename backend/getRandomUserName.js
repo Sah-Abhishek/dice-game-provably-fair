@@ -97,7 +97,18 @@ const usernames = [
   "lysa_arryn",
   "talisa_stark",
   "sophie",
-  "catelyn_tully"
+  "catelyn_tully",
+   "harry", "hermione", "ron", "albus", "severus", "tom", "draco", "sirius", "remus", "rubeus",
+  "minerva", "ginny", "fred", "george", "luna", "neville", "cedric", "cho", "narcissa", "lucius",
+  "bellatrix", "peter", "arthur", "molly", "fleur", "viktor", "dobby", "newt", "percy", "charlie",
+  "bill", "kingsley", "cornelius", "gellert", "quirinus", "rolanda", "pomona", "horace", "argus", "gilderoy",
+  "nicolas", "frank", "alice", "marvolo", "morfin", "gregorovitch", "mundungus", "stan", "ernie", "lee",
+  "angelina", "parvati", "padma", "lavender", "seamus", "dean", "justin", "terry", "anthony", "michael",
+  "zacharias", "susan", "hannah", "ernie", "millicent", "theodore", "blaise", "pansy", "vincent", "gregory",
+  "marcus", "oliver", "cormac", "demelza", "roger", "adrian", "katie", "alicia", "terence", "amelia",
+  "andromeda", "ted", "cassandra", "charity", "wilhelmina", "armando", "phineas", "elizabeta", "bathilda", "everard",
+  "godric", "helga", "rowena", "salazar", "hedwig", "fawkes", "buckbeak", "aragog", "norbert", "trevor"
+
 ];
 
 /**
